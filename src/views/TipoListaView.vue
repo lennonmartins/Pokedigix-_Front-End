@@ -1,4 +1,5 @@
 <script>
+import AtaqueDataService from '../services/AtaqueDataService';
 import TipoDataService from '../services/TipoDataService';
 
 export default {
@@ -8,6 +9,18 @@ export default {
 
     },
     methods: {
+        salvar() {
+            AtaqueDataService.criar(this.tipo)
+                .then(resposta => {
+                    this.tipo.id = resposta.id;
+                    console.log(this.tipo);
+                    this.salvo = true;
+                })
+                .catch(erro => {
+                    console.log(erro);
+                    this.salvo = false;
+                })
+        },
         buscarTipos() {
             TipoDataService.buscarTodos()
                 .then(resposta => {

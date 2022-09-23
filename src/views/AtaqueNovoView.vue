@@ -28,10 +28,29 @@ export default {
         }
     },
     methods: {
+        salvar() {
+            AtaqueDataService.criar(this.ataqueRequest)
+                .then(resposta => {
+                    console.log(this.ataqueRequest);
+                    this.salvo = true;
+                })
+                .catch(erro => {
+                    console.log(erro);
+                    console.log(this.ataqueRequest);
+                    this.salvo = false;
+                })
+        },
+
+        novo(){
+            this.ataqueRequest = new AtaqueRequest();
+            this.salvo = false;
+        },
+
         carregarTipo() {
             this.tipos = TipoDataService.buscarTodos()
                 .then(resposta => {
                     this.tipos = resposta;
+                    this.ataqueRequest.tipoId = this.tipos[0].id;
                 })
                 .catch(erro => {
                     console.log(erro);
@@ -86,6 +105,10 @@ export default {
                         </option>
                     </select>
                 </div>
+                <div class="col-12">
+                    <label for="descricao" class="form-label">Descrição do Ataque: </label>
+                    <textarea class="form-control" id="descricao" v-model="ataqueRequest.descricao" rows="3"></textarea>
+                </div>
 
                 <div>
                     <button @click.prevent="salvar" class="btn btn-danger row-1">Cadastrar</button>
@@ -94,8 +117,8 @@ export default {
         </div>
         <div v-else>
             <div class="row">
-                <h4 class="mt-2">Tipo cadastrado com sucesso!</h4>
-                <span>Tipo id: {{tipo.id}}</span>
+                <h4 class="mt-2">Ataque cadastrado com sucesso!</h4>
+                <span>Ataque cadastrado: {{ataqueRequest.nome}}</span>
             </div>
             <div class="row-sm">
                 <button @click="novo" class="btn btn-dark mt-2">Novo</button>
