@@ -1,6 +1,7 @@
 <script>
 import AtaqueDataService from '../services/AtaqueDataService';
 import AtaqueRequest from '..//models/Ataque'
+import TipoDataService from '../services/TipoDataService';
 
 export default {
     name: 'ataques-novo',
@@ -13,19 +14,33 @@ export default {
                     indice: 1,
                     nome: "Físico",
                     nomeBanco: "FISICO"
-                },{
+                }, {
                     indice: 2,
                     nome: "Especial",
                     nomeBanco: "ESPECIAL"
-                },{
+                }, {
                     indice: 3,
                     nome: "Efeito",
                     nomeBanco: "EFEITO"
                 }
-            ]
+            ],
+            tipos: []
         }
     },
     methods: {
+        carregarTipo() {
+            this.tipos = TipoDataService.buscarTodos()
+                .then(resposta => {
+                    this.tipos = resposta;
+                })
+                .catch(erro => {
+                    console.log(erro);
+                });
+        },
+    },
+    mounted() {
+        this.ataqueRequest.categoria = this.categorias[1].nomeBanco;
+        this.carregarTipo();
 
     }
 }
@@ -53,15 +68,23 @@ export default {
                 </div>
                 <div class="col-9">
                     <label for="categoria" class="form-label">Categoria: </label>
-                    <select class="form-select" aria-label="Default select example">
-                        <option selected disabled>Escolha a categoria do seu ataque</option>
-                        <option v-for="categoria in categorias" :key="categoria.indice">{{categoria.nome}}</option>
+                    <select id="categoria" class="form-select" aria-label="Default select example"
+                        v-model="ataqueRequest.categoria">
+                        <option v-for="categoria in categorias" :key="categoria.indice" :value="categoria.nomeBanco">
+                            {{categoria.nome}}</option>
                     </select>
                 </div>
                 <div class="col-3">
                     <label for="pp" class="form-label">PP: </label>
-                    <input type="number" class="form-control" v-model="ataqueRequest.pontosDePoder" id="pp"
-                         required>
+                    <input type="number" class="form-control" v-model="ataqueRequest.pontosDePoder" id="pp" required>
+                </div>
+                <div class="col-12">
+                    <label for="categoria" class="form-label">Tipo do ataque: </label>
+                    <select id="tipo" class="form-select" v-model="ataqueRequest.tipoId">
+                        <option v-for="tipo in tipos" :key="tipo.id" :value="tipo.id">
+                            {{tipo.nome}}
+                        </option>
+                    </select>
                 </div>
 
                 <div>
