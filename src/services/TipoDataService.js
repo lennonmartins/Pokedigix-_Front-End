@@ -27,7 +27,7 @@ class TipoDataService{
     }
 
     async remover(id){
-        await http.delete('/tipos/${id}');
+        await http.delete('/tipos/' + (id));
     }
 
     async removerPeloNome(nome){

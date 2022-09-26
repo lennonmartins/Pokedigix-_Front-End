@@ -10,7 +10,7 @@ export default {
     },
     methods: {
         salvar() {
-            AtaqueDataService.criar(this.tipo)
+            TipoDataService.criar(this.tipo)
                 .then(resposta => {
                     this.tipo.id = resposta.id;
                     console.log(this.tipo);
@@ -30,6 +30,13 @@ export default {
                 .catch(erro => {
                     console.log(erro);
                 })
+        },
+        remover(id){
+            console.log(typeof(id));
+            TipoDataService.remover(parseInt((id)))
+            .then(() => {
+               this.buscarTipos(); 
+            })
         }
     },
     mounted() {
@@ -47,7 +54,7 @@ export default {
         <div class="container row-3 col-0 ">
         <div class="card text-bg-light m-2 " style="max-width: 150px;" v-for="tipo in tipos" :key="tipo.id">
             <ul class="list-group list-group-flush">
-                <li class="list-group-item  text-bg-light space-between" >Id: {{tipo.id}} - {{tipo.nome}} 
+                <li class="list-group-item  text-bg-light space-between" @click="remover(tipo.id)">Id: {{tipo.id}} - {{tipo.nome}} 
                 </li>
             </ul>
         </div>

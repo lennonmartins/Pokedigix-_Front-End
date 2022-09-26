@@ -5,7 +5,7 @@ import { RouterLink } from 'vue-router';
 
 <template>
     <header>
-        <nav class=" sticky-top navbar navbar-dark navbar-expand-lg bg-dark">
+        <nav class=" sticky-top navbar navbar-dark navbar-expand-lg bg-dark warning ">
 
             <div class="container-md">
                 <a class="navbar-brand" href="#">Pokédigix</a>
