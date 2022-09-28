@@ -7,12 +7,12 @@ class TipoDataService{
     }
 
     async buscarPeloId(id){
-        let resposta = await http.get('/tipos/${id}');
+        let resposta = await http.get('/tipos/' + id);
         return resposta.data;
     }
 
     async buscarPeloNome(nome){
-        let resposta = await http.get('/tipos?termo=${nome}');
+        let resposta = await http.get('/tipos?termo=' + nome);
         return resposta.data;
     }
 
@@ -22,16 +22,16 @@ class TipoDataService{
     }
 
     async atualizar(id, tipos){
-        let resposta = await http.put('/tipos/${id}', tipos);
+        let resposta = await http.put('/tipos/' + id, tipos);
         return resposta.data;
     }
 
     async remover(id){
-        await http.delete('/tipos/' + (id));
+        await http.delete('/tipos/' + id);
     }
 
     async removerPeloNome(nome){
-        await http.delete('/tipos?termo=${nome}');
+        await http.delete('/tipos?termo=' + nome);
     }
 }
 

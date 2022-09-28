@@ -7,17 +7,17 @@ class AtaqueDataService {
     }
 
     async buscarPeloId(id){
-        let resposta = await http.get('/ataques/${id}');
+        let resposta = await http.get('/ataques/' + id);
         return resposta.data;
     }
 
     async buscarPeloNome(nome){
-        let resposta = await http.get('/ataques?termo=${nome}');
+        let resposta = await http.get('/ataques?termo=' + nome);
         return resposta.data;
     }
 
     async buscarPeloIdDoTipo(id){
-        let resposta = await http.get('/ataques/tipo/${id}');
+        let resposta = await http.get('/ataques/tipo/' + id);
         return resposta.data;
     }
 
@@ -27,12 +27,12 @@ class AtaqueDataService {
     }
 
     async atualizar(id, ataque){
-        let resposta = await http.put('/ataques/${id}', ataque);
+        let resposta = await http.put('/ataques/' + id, ataque);
         return resposta.data;
     }
 
     async remover(id){
-        await http.delete('/ataques/${id}');
+        await http.delete('/ataques/' + id);
     }
 
 }

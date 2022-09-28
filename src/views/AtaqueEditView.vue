@@ -5,7 +5,7 @@ import TipoDataService from '../services/TipoDataService';
 import AtaqueResponse from '../models/AtaqueResponse';
 
 export default {
-    name: 'ataques-novo',
+    name: 'ataques-edit',
     data() {
         return {
             ataqueRequest: new AtaqueRequest(),
@@ -35,7 +35,6 @@ export default {
             TipoDataService.buscarTodos()
                 .then(resposta => {
                     this.tipos = resposta;
-                    this.ataqueRequest.tipoId = this.tipos[0].id;
                 })
                 .catch(erro => {
                     console.log(erro);
@@ -43,24 +42,15 @@ export default {
         },
 
         salvar() {
-            AtaqueDataService.criar(this.ataqueRequest)
+            AtaqueDataService.atualizar(this.$route.params.id, this.ataqueRequest)
                 .then(resposta => {
                     this.ataqueResponse = resposta;
-                    console.log(this.ataqueResponse);
                     this.salvo = true;
                 })
                 .catch(erro => {
                     console.log(erro);
-                    console.log(this.ataqueRequest);
                     this.salvo = false;
                 })
-        },
-
-        novo() {
-            this.salvo = false;
-            this.ataqueRequest = new AtaqueRequest();
-            this.ataqueResponse = new AtaqueResponse();
-            this.ataqueRequest.categoria = this.categorias[1].nomeBanco;
         },
 
         escolherCategoria() {
@@ -71,12 +61,24 @@ export default {
             }
         },
 
+        carregarAtaque(id) {
+            AtaqueDataService.buscarPeloId(id)
+                .then(resposta => {
+                    this.ataqueRequest = resposta;
+                    this.ataqueRequest.tipoId = resposta.tipo.id;
+                 })
+                .catch(erro => {
+                    console.log(erro);
+                })
+        },
+        voltar(){
+            this.$router.push({name: 'ataques-lista'});
+        }
+
     },
     mounted() {
         this.carregarTipos();
-        this.novo();
-
-
+        this.carregarAtaque(this.$route.params.id);
     }
 }
 </script>
@@ -127,17 +129,17 @@ export default {
                 </div>
 
                 <div>
-                    <button @click.prevent="salvar" class="btn btn-danger row-1">Cadastrar</button>
+                    <button @click.prevent="salvar" class="btn btn-danger row-1">Atualizar</button>
                 </div>
             </form>
         </div>
         <div v-else>
             <div class="row">
-                <h4 class="mt-2">Ataque cadastrado com sucesso!</h4>
-                <span>Ataque cadastrado: {{ataqueResponse.nome}}</span>
+                <h4 class="mt-2">Ataque atualizado com sucesso!</h4>
+                <span>Ataque atualizada: {{ataqueResponse.id}} - {{ataqueResponse.nome}} </span>
             </div>
             <div class="row-sm">
-                <button @click="novo" class="btn btn-dark mt-2">Novo</button>
+                <button @click="voltar" class="btn btn-dark mt-2">Voltar</button>
             </div>
         </div>
     </div>

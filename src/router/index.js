@@ -4,6 +4,7 @@ import TipoNovoView from '../views/TipoNovoView.vue'
 import TipoListaView from '../views/TipoListaView.vue'
 import AtaqueNovoView from '../views/AtaqueNovoView.vue'
 import AtaqueListaView from '../views/AtaqueListaView.vue'
+import AtaqueEditView  from '../views/AtaqueEditView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,10 @@ const router = createRouter({
       name: 'ataques-novo',
       component: AtaqueNovoView
     },{
+      path: '/ataques/edit/:id',
+      name: 'ataques-edit',
+      component: AtaqueEditView
+    },{
       path: '/ataques/lista',
       name: 'ataques-lista',
       component: AtaqueListaView
@@ -36,9 +41,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
+    
       component: () => import('../views/AboutView.vue')
     }
   ]
