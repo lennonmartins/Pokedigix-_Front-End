@@ -1,32 +1,60 @@
 <script>
 import AtaqueDataService from '../services/AtaqueDataService';
+import Loading from "vue-loading-overlay";
 
 export default {
     name: "ataques-lista",
-    deletar: false,
     data() {
-        return { ataques: [] };
+        return {
+            ataques: [],
+            ataqueSelecionado: this.inicializarAtaques(),
+            isLoading: false,
+            fullPage: false,
+        };
+    },
+    components:{
+        Loading,
     },
     methods: {
         buscarAtaques() {
+            this.isLoading = true;
             AtaqueDataService.buscarTodos()
                 .then(resposta => {
-                    this.ataques = resposta
+                    this.ataques = resposta;
+                    this.isLoading = false;
                 })
                 .catch(erro => {
                     console.log(erro);
+                    this.isLoading = false;
                 })
+        },
+        inicializarAtaques() {
+            return {
+                id: null,
+                nome: null
+            }
         },
         editarAtaque(id) {
             console.log(id);
             this.$router.push({ name: 'ataques-edit', params: { id: id } });
         },
-        async removerAtaque(id) {
-            if (deletar){
-                await AtaqueDataService.remover(id)
-            this.buscarAtaques();
-        }else{
-            this.buscarAtaques();
+        removerAtaque() {
+            this.isLoading = true;
+            AtaqueDataService.remover(this.ataqueSelecionado.id)
+                .then(() => {
+                    this.ataques = this.ataques.filter(ataque => ataque.id != this.ataqueSelecionado.id);
+                    this.inicializarAtaques();
+                    this.isLoading = false;
+                })
+                .catch(() => {
+                    this.inicializarAtaques();
+                    this.isLoading = false;
+                })
+
+        },
+        selecionarAtaque(ataque) {
+            this.ataqueSelecionado.id = ataque.id;
+            this.ataqueSelecionado.nome = ataque.nome
         }
     },
 
@@ -40,9 +68,14 @@ export default {
     <main>
         <div>
             <h2 class=" mb-4 mt-4">Lista de Ataques</h2>
-            <div class="container  ">
-                <table class="table ">
-                    <thead>
+            <div class="table-responsive  ">
+                <loading 
+                v-model:active="isLoading" 
+                :is-full-page="fullPage" 
+                :loader="'dots'" 
+                />
+                <table class="table table-striped">
+                    <thead class="table-dark">
                         <tr class="text-center">
                             <th scope="col">Id</th>
                             <th scope="col" class="text-center">Ataque</th>
@@ -76,38 +109,38 @@ export default {
                                 </button>
                             </td>
                             <td>
-                                <button data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" class="btn">
+                                <button data-bs-toggle="modal" data-bs-target="#confirmarExclusao" type="button"
+                                    class="btn" @click="selecionarAtaque(ataque)">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         class="bi bi-trash-fill" viewBox="0 0 16 16">
                                         <path
                                             d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
                                     </svg>
                                 </button>
-                                <div class="modal fade" id="exampleModal" tabindex="-1"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Mas espera aí?</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Você tem certeza que deseja excluir este ataque?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-danger"
-                                                    @click="removerAtaque(ataque.id) ">Deletar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmarExclusao" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">D eseja excluir o ataque
+                            {{ataqueSelecionado.nome}}? </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Após excluído não será possível reverter a operação!
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button data-bs-dismiss="modal" type="button" class=" btn btn-danger"
+                            @click="removerAtaque() ">Deletar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
