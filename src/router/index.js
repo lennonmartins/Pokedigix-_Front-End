@@ -7,6 +7,7 @@ import AtaqueNovoView from '../views/AtaqueNovoView.vue'
 import AtaqueListaView from '../views/AtaqueListaView.vue'
 import AtaqueEditView  from '../views/AtaqueEditView.vue'
 import PokemonNovoView from '../views/PokemonNovoView.vue'
+import TreinadorListaView from '../views/TreinadorListaView.vue'
 
 
 const router = createRouter({
@@ -48,6 +49,10 @@ const router = createRouter({
       path: '/ataques/lista',
       name: 'ataques-lista',
       component: AtaqueListaView
+    },{
+      path: '/treinadores/lista',
+      name: 'treinadores-lista',
+      component: TreinadorListaView
     }
   ]
 })

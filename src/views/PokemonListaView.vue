@@ -96,10 +96,10 @@ export default {
               <div class="card-header bg-transparent border- m-0 p-0  ">
                 <div class="row">
                   <div class="col-6">
-                    <h5 class="mb-0">
+                    <h6 class="mb-0">
                       {{pokemon.nome}} <img style="width: 45px; display:inline-flex;"
                         :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pokemon.numeroPokedex + '.png'" />
-                    </h5>
+                    </h6>
                   </div>
                   <div class="col-6 text-end mt-1">
                     <button data-bs-toggle="collapse" :data-bs-target="'#collapseExample'+ pokemon.id" type="button"
@@ -140,7 +140,7 @@ export default {
                     style="--bs-btn-padding-y: .15rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"> Shiny
                   </button>
                 </div>
-                <div class="col-md-8">
+                <div class="col">
                   <div class="card-body">
                     <ul class="list-group list-group">
                       <li class="list-group-item  text-bg">Numero pokedéx: {{pokemon.numeroPokedex}}</li>
