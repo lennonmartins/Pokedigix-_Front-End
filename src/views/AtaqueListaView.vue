@@ -109,8 +109,11 @@ export default {
                                 </button>
                             </td>
                             <td>
-                                <button data-bs-toggle="modal" data-bs-target="#confirmarExclusao" type="button"
-                                    class="btn" @click="selecionarAtaque(ataque)">
+                                <button 
+                                data-bs-toggle="modal" data-bs-target="#confirmarExclusao" 
+                                type="button"
+                                class="btn" 
+                                @click="selecionarAtaque(ataque)">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         class="bi bi-trash-fill" viewBox="0 0 16 16">
                                         <path
@@ -128,7 +131,7 @@ export default {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">D eseja excluir o ataque
+                        <h5 class="modal-title" id="exampleModalLabel">Deseja excluir o ataque
                             {{ataqueSelecionado.nome}}? </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -136,7 +139,10 @@ export default {
                         Após excluído não será possível reverter a operação!
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button 
+                        type="button" 
+                        class="btn btn-secondary" 
+                        data-bs-dismiss="modal">Cancelar</button>
                         <button data-bs-dismiss="modal" type="button" class=" btn btn-danger"
                             @click="removerAtaque() ">Deletar</button>
                     </div>
