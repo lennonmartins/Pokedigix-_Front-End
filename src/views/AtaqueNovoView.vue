@@ -138,7 +138,7 @@ export default {
     </div>
     <div v-else>
         <MensagemSucesso urlListagem="ataques-lista" @cadastro="novo">
-            <span> taque cadastrado: {{ataqueResponse.nome}}</span>
+            <span> Ataque cadastrado: {{ataqueResponse.nome}}</span>
         </MensagemSucesso>
     </div>
 </template>

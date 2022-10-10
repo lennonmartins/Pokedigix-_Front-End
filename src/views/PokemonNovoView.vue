@@ -4,9 +4,10 @@ import PokemonRequest from '../models/PokemonRequest';
 import TipoDataService from '../services/TipoDataService';
 import PokemonResponse from '../models/AtaqueResponse';
 import AtaqueDataService from '../services/AtaqueDataService';
+import MensagemSucesso from '../components/MensagemSucesso.vue';
 
 export default {
-    name: 'pokemons-novo',
+    name: "pokemons-novo",
     data() {
         return {
             pokemonRequest: new PokemonRequest(),
@@ -16,7 +17,7 @@ export default {
             ataques: [],
             ataquesSelecionados: [],
             ataqueSeleciado: {},
-        }
+        };
     },
     methods: {
         carregarTipos() {
@@ -40,27 +41,22 @@ export default {
         salvar() {
             const listaFiltradaTipos = this.pokemonRequest.tiposIds.filter(tipo => tipo != "");
             this.pokemonRequest.tiposIds =
-                [... new Set(listaFiltradaTipos)];
-
+                [...new Set(listaFiltradaTipos)];
             this.pokemonRequest.ataquesIds =
                 this.ataquesSelecionados.map(ataque => ataque.id);
-
             PokemonDataService.criar(this.pokemonRequest)
                 .then(() => {
                     this.salvo = true;
-
                 })
                 .catch(erro => {
                     console.log(erro);
                     console.log(this.pokemonResponse);
-                })
-
-
+                });
         },
         inicializarTipo() {
             return {
                 id: null
-            }
+            };
         },
         novo() {
             this.pokemonRequest = new PokemonRequest();
@@ -72,15 +68,15 @@ export default {
                 this.ataquesSelecionados = [...new Set(this.ataquesSelecionados)];
             }
         },
-        removerAtaque(indice){
+        removerAtaque(indice) {
             this.ataquesSelecionados.splice(indice, 1);
         }
-
     },
     mounted() {
         this.carregarTipos();
         this.carregarAtaques();
-    }
+    },
+    components: { MensagemSucesso }
 }
 
 </script>
@@ -199,25 +195,26 @@ export default {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-3 mt-3" style="min-width: rem;" v-for="(ataque, indice) in ataquesSelecionados" :key="ataque.id">
+                        <div class="col-3 mt-3" style="min-width: rem;" v-for="(ataque, indice) in ataquesSelecionados"
+                            :key="ataque.id">
                             <div class="card h-100">
                                 <div class="card-header">
                                     <div class="container">
-                                    <div class="row align-items-center">
-                                        <div class="col-9">
-                                            {{ataque.nome}}
-                                        </div>
-                                        <div class="col-3">
-                                            <button  class=" btn" @click.prevent="removerAtaque(indice)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                                                </svg>
-                                            </button>
+                                        <div class="row align-items-center">
+                                            <div class="col-9">
+                                                {{ataque.nome}}
+                                            </div>
+                                            <div class="col-3">
+                                                <button class=" btn" @click.prevent="removerAtaque(indice)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 </div>
 
                                 <div class="card-body">
@@ -251,9 +248,10 @@ export default {
 
     </div>
     <div v-else>
-        <div class="mt-3  alert alert-success" role="alert">
-            O pokemon {{pokemonRequest.nome}} salvo com sucesso!
-        </div>
-        <button @click="novo" class="btn  btn-danger">Novo</button>
+        <MensagemSucesso  urlListagem="pokemons-lista" @casdastro="novo">
+            <span>
+                Pokemon cadastrado: {{pokemonResponse.nome}}
+            </span>
+        </MensagemSucesso>
     </div>
 </template>

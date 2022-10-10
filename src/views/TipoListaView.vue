@@ -1,6 +1,9 @@
 <script>
 import TipoDataService from '../services/TipoDataService';
 import Loading from "vue-loading-overlay";
+import Paginacao from '../components/Paginacao.vue';
+import Pesquisa from '../components/Pesquisa.vue';
+import Ordenacao from '../components/Ordenacao.vue';
 
 export default {
     name: "lista-tipos",
@@ -13,8 +16,11 @@ export default {
 
     },
     components: {
-        Loading,
-    },
+    Loading,
+    Paginacao,
+    Pesquisa,
+    Ordenacao
+},
     methods: {
         buscarTipos() {
             this.isLoading = true;
@@ -73,6 +79,14 @@ export default {
 <template>
     <div class="row">
         <h2 class="mb-4 mt-4">Lista de Tipos</h2>
+        <div class="row " style="justify-content: space-between;">
+                <pesquisa>
+
+                </pesquisa>
+                <ordenacao>
+                    
+                </ordenacao>
+            </div>
         <div class="table-responsive">
             <loading v-model:active="isLoading" />
             <table class="table  table-striped">
@@ -140,39 +154,8 @@ export default {
             <button @click="novo" class="btn btn-dark mt-2">Novo</button>
         </div>
     </div>
+    <paginacao>
+
+    </paginacao>
 
 </template>
-
-<!-- <template>
-    <main>
-        <div>
-            <h2 class=" mb-4 mt-4">Lista de Tipos</h2>
-        </div>
-        <div class="container row-3 col-0 ">
-            <div class="card text-bg-light m-2 " style="max-width: 150px;" v-for="tipo in tipos" :key="tipo.id">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item  text-bg-light space-between" @click="remover(tipo.id)">Id: {{tipo.id}} -
-                        {{tipo.nome}}
-                        <button type="button" class="btn" @click="editarAtaque(ataque.id)" style="display: line;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                <path
-                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                <path fill-rule="evenodd"
-                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                            </svg>
-                        </button>
-                        <button data-bs-toggle="modal" data-bs-target="#confirmarExclusao" type="button" class="btn"
-                            @click="selecionarAtaque(ataque)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                <path
-                                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                            </svg>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </main>
-</template> -->

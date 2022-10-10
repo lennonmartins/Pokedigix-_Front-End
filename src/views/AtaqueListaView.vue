@@ -1,6 +1,9 @@
 <script>
 import AtaqueDataService from '../services/AtaqueDataService';
 import Loading from "vue-loading-overlay";
+import Paginacao from '../components/Paginacao.vue';
+import Pesquisa from '../components/Pesquisa.vue';
+import Ordenacao from '../components/Ordenacao.vue';
 
 export default {
     name: "ataques-lista",
@@ -12,8 +15,11 @@ export default {
             fullPage: false,
         };
     },
-    components:{
+    components: {
         Loading,
+        Paginacao,
+        Pesquisa,
+        Ordenacao
     },
     methods: {
         buscarAtaques() {
@@ -67,13 +73,17 @@ export default {
 <template>
     <main>
         <div>
-            <h2 class=" mb-4 mt-4">Lista de Ataques</h2>
+            <h2 class=" mb-4 mt-4 " >Lista de Ataques</h2>
+            <div class="row " style="justify-content: space-between;">
+                <pesquisa>
+
+                </pesquisa>
+                <ordenacao>
+
+                </ordenacao>
+            </div>
             <div class="table-responsive  ">
-                <loading 
-                v-model:active="isLoading" 
-                :is-full-page="fullPage" 
-                :loader="'dots'" 
-                />
+                <loading v-model:active="isLoading" :is-full-page="fullPage" :loader="'dots'" />
                 <table class="table table-striped">
                     <thead class="table-dark">
                         <tr class="text-center">
@@ -109,11 +119,8 @@ export default {
                                 </button>
                             </td>
                             <td>
-                                <button 
-                                data-bs-toggle="modal" data-bs-target="#confirmarExclusao" 
-                                type="button"
-                                class="btn" 
-                                @click="selecionarAtaque(ataque)">
+                                <button data-bs-toggle="modal" data-bs-target="#confirmarExclusao" type="button"
+                                    class="btn" @click="selecionarAtaque(ataque)">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         class="bi bi-trash-fill" viewBox="0 0 16 16">
                                         <path
@@ -139,15 +146,15 @@ export default {
                         Após excluído não será possível reverter a operação!
                     </div>
                     <div class="modal-footer">
-                        <button 
-                        type="button" 
-                        class="btn btn-secondary" 
-                        data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button data-bs-dismiss="modal" type="button" class=" btn btn-danger"
                             @click="removerAtaque() ">Deletar</button>
                     </div>
                 </div>
             </div>
         </div>
+        <paginacao>
+
+        </paginacao>
     </main>
 </template>
