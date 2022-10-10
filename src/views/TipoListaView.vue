@@ -129,7 +129,7 @@ export default {
                             Cancelar
                         </button>
                         <button type="button" class="btn btn-primary" @click="removerTipoSelecionado"
-                            data-bs-dismiss="modal">Sim</button>
+                            data-bs-dismiss="modal">Confirmar</button>
                     </div>
                 </div>
             </div>

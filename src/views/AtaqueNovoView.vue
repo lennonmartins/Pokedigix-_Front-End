@@ -3,9 +3,11 @@ import AtaqueDataService from '../services/AtaqueDataService';
 import AtaqueRequest from '../models/AtaqueRequest'
 import TipoDataService from '../services/TipoDataService';
 import AtaqueResponse from '../models/AtaqueResponse';
+import MensagemSucesso from '../components/MensagemSucesso.vue';
+
 
 export default {
-    name: 'ataques-novo',
+    name: "ataques-novo",
     data() {
         return {
             ataqueRequest: new AtaqueRequest(),
@@ -16,11 +18,13 @@ export default {
                     indice: 1,
                     nome: "Físico",
                     nomeBanco: "FISICO"
-                }, {
+                },
+                {
                     indice: 2,
                     nome: "Especial",
                     nomeBanco: "ESPECIAL"
-                }, {
+                },
+                {
                     indice: 3,
                     nome: "Efeito",
                     nomeBanco: "EFEITO"
@@ -28,7 +32,10 @@ export default {
             ],
             tipos: [],
             desabilitarForca: false,
-        }
+        };
+    },
+    compponents: {
+        MensagemSucesso
     },
     methods: {
         carregarTipos() {
@@ -41,7 +48,6 @@ export default {
                     console.log(erro);
                 });
         },
-
         salvar() {
             AtaqueDataService.criar(this.ataqueRequest)
                 .then(resposta => {
@@ -53,38 +59,35 @@ export default {
                     console.log(erro);
                     console.log(this.ataqueRequest);
                     this.salvo = false;
-                })
+                });
         },
-
         novo() {
             this.salvo = false;
             this.ataqueRequest = new AtaqueRequest();
             this.ataqueResponse = new AtaqueResponse();
             this.ataqueRequest.categoria = this.categorias[1].nomeBanco;
         },
-
         escolherCategoria() {
             if (this.ataqueRequest.categoria == "EFEITO") {
                 this.desabilitarForca = true;
-            } else {
+            }
+            else {
                 this.desabilitarForca = false;
             }
         },
-
     },
     mounted() {
         this.carregarTipos();
         this.novo();
-
-
-    }
+    },
+    components: { MensagemSucesso }
 }
 </script>
 
 <template>
     <h2 class="mt-4 mb-4">Cadastrar um novo Ataque</h2>
-    <div class="border p-2 rounded row-1 " style="max-width: 32rem; align-items: center;">
-        <div v-if="!salvo">
+    <div v-if="!salvo">
+        <div class="border p-2 rounded row-1 " style="max-width: 32rem; align-items: center;">
             <form class="row g-3">
                 <div class="col-12">
                     <label for="nome" class="form-label">Nome do Ataque: </label>
@@ -125,20 +128,17 @@ export default {
                     <label for="descricao" class="form-label">Descrição do Ataque: </label>
                     <textarea class="form-control" id="descricao" v-model="ataqueRequest.descricao" rows="3"></textarea>
                 </div>
-
-                <div>
-                    <button @click.prevent="salvar" class="btn btn-danger row-1">Cadastrar</button>
-                </div>
+                
+                    <div>
+                        <button @click.prevent="salvar" class="btn btn-danger row-1">Cadastrar</button>
+                    </div>
+                
             </form>
         </div>
-        <div v-else>
-            <div class="row">
-                <h4 class="mt-2">Ataque cadastrado com sucesso!</h4>
-                <span>Ataque cadastrado: {{ataqueResponse.nome}}</span>
-            </div>
-            <div class="row-sm">
-                <button @click="novo" class="btn btn-dark mt-2">Novo</button>
-            </div>
-        </div>
+    </div>
+    <div v-else>
+        <MensagemSucesso urlListagem="ataques-lista" @cadastro="novo">
+            <span> taque cadastrado: {{ataqueResponse.nome}}</span>
+        </MensagemSucesso>
     </div>
 </template>

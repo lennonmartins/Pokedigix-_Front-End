@@ -6,6 +6,11 @@ class EnderecoDataService {
         return resposta.data;
     }
 
+    async buscarTodos(){
+        let resposta = await http.get('/enderecos/' );
+        return resposta.data;
+    }
+
     async buscarPelaCidade(cidade){
         let resposta = await http.get('/enderecos/'+ cidade );
         return resposta.data;

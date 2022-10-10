@@ -70,6 +70,11 @@ export default {
       }else{
         this.shiny =true;
       }
+    },
+    novo(){
+      this.$router.push({
+        name: 'pokemons-novo'
+      })
     }
   },
   mounted() {
@@ -194,6 +199,10 @@ export default {
                 </div>
             </div>
             </div>
+        </div>
+        
+        <div class="m-2 col-1">
+            <button @click="novo" class="btn btn-success">Novo</button>
         </div>
 
 
