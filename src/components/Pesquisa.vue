@@ -10,7 +10,7 @@ export default {
 <template>
     <div class="col-4">
         <form class="d-flex    mb-2" role="search">
-            <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Search">
+            <input class="form-control me-2" type="search" placeholder="Buscar..." aria-label="Search" style="min-width: 10rem;">
             <button class="btn btn-outline-dark" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                     height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                     <path

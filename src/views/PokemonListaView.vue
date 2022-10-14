@@ -1,21 +1,42 @@
 <script >
-import PokemonDataService from "../services/PokemonDataService";
-import TipoDataService from "../services/TipoDataService";
 import Loading from "vue-loading-overlay";
+import Ordenacao from "../components/Ordenacao.vue";
 import Paginacao from "../components/Paginacao.vue";
 import Pesquisa from "../components/Pesquisa.vue";
-import Ordenacao from "../components/Ordenacao.vue";
+import PokemonDataService from "../services/PokemonDataService";
 
 export default {
   name: "lista-pokemons",
   data() {
     return {
       pokemons: [],
-      tipos: [],
+      pagina: 0,
+      tamanho: 4,
+      termo:"",
+      ordenacao: {
+        titulo: "",
+        direcao: "",
+        campo: ""
+      },
       pokemonSelecionado: this.inicializarPokemons(),
       isLoading: false,
       fullPage: false,
       shiny: false,
+      opcoes: [{
+        titulo: "Nome: A - Z",
+        direcao: "ASC",
+        campo: "nome"
+      },
+      {
+        titulo: "Nome: Z - A",
+        direcao: "DESC",
+        campo: "nome"
+      },
+      {
+        titulo: "N° Pokedéx: Crescente",
+        direcao: "ASC",
+        campo: "numeroPokedex"
+      }]
     };
   },
   components: {
@@ -23,26 +44,17 @@ export default {
     Paginacao,
     Pesquisa,
     Ordenacao
-},
+  },
   methods: {
-    buscarTipos() {
-      TipoDataService.buscarTodos()
-        .then(resposta => {
-          this.tipos = resposta
-        })
-        .catch(erro => {
-          console.log(erro);
-        })
-    },
     buscarPokemons() {
       this.isLoading = true;
-      PokemonDataService.buscarTodos()
-        .then(resposta => {
+      PokemonDataService.buscarTodosOrdenados(this.pagina, this.tamanho, this.ordenacao.campo, this.ordenacao.direcao, this.termo)
+        .then((resposta) => {
           this.pokemons = resposta;
           this.isLoading = false;
           console.log(this.pokemons);
         })
-        .catch(erro => {
+        .catch((erro) => {
           console.log(erro);
           this.isLoading = false;
         })
@@ -84,6 +96,7 @@ export default {
     }
   },
   mounted() {
+    this.ordenacao = this.opcoes[0];
     this.buscarPokemons();
   }
 }
@@ -94,15 +107,13 @@ export default {
   <h2 class=" mb-4 mt-4">Lista de Pokemons</h2>
   <div class="container">
     <div class="row " style="justify-content: space-between;">
-                <pesquisa>
+      {{ordenacao}}
+      <Ordenacao v-model:ordenacao="ordenacao" @ordenar="buscarPokemons" :ordenacao="ordenacao" :opcoes="opcoes" />
+      
 
-                </pesquisa>
-                <ordenacao>
-
-                </ordenacao>
-            </div>
-  <div class="">
-    <loading v-model:active="isLoading" :is-full-page="fullPage" :loader="'dots'" />
+    </div>
+    <div class="">
+      <loading v-model:active="isLoading" :is-full-page="fullPage" :loader="'dots'" />
       <div class="row row-cols-1 row-cols mt-1">
         <div class="card  text-bg-light m-2  " style="max-width: 415px;" v-for="pokemon in pokemons" :key="pokemon.id">
           <div class="card-header bg-transparent border- m-0 p-0  ">
