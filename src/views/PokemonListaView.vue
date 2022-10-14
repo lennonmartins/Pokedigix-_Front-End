@@ -11,8 +11,8 @@ export default {
     return {
       pokemons: [],
       pagina: 0,
-      tamanho: 4,
-      termo:"",
+      tamanho: 9,
+      termo: "",
       ordenacao: {
         titulo: "",
         direcao: "",
@@ -46,6 +46,11 @@ export default {
     Ordenacao
   },
   methods: {
+    filtrarPeloDigitado() {
+      if(this.termo.length > 3) {
+        this.buscarPokemons();
+      }
+    },
     buscarPokemons() {
       this.isLoading = true;
       PokemonDataService.buscarTodosOrdenados(this.pagina, this.tamanho, this.ordenacao.campo, this.ordenacao.direcao, this.termo)
@@ -96,8 +101,8 @@ export default {
     }
   },
   mounted() {
-    this.ordenacao = this.opcoes[0];
     this.buscarPokemons();
+    this.ordenacao = this.opcoes[0];
   }
 }
 </script>
@@ -107,9 +112,11 @@ export default {
   <h2 class=" mb-4 mt-4">Lista de Pokemons</h2>
   <div class="container">
     <div class="row " style="justify-content: space-between;">
-      {{ordenacao}}
-      <Ordenacao v-model:ordenacao="ordenacao" @ordenar="buscarPokemons" :ordenacao="ordenacao" :opcoes="opcoes" />
-      
+      <Pesquisa v-model="pesquisa" @pesquisar="filtrarPeloDigitado" :pesquisa="pesquisa" :opcoes="opcoes"/>
+      <div class="col-2 text-end">
+        <Ordenacao v-model="ordenacao" @ordenar="buscarPokemons" :ordenacao="ordenacao" :opcoes="opcoes" />
+      </div>
+
 
     </div>
     <div class="">

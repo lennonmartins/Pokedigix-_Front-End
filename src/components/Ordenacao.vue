@@ -4,8 +4,8 @@ export default {
     props: {
         ordenacao: Object,
         opcoes: Array
-    }, 
-    methods:{
+    },
+    methods: {
         filtrar() {
             this.$emit('ordenar');
         }
@@ -14,12 +14,13 @@ export default {
 </script>
 
 <template>
-    <div class="col-2 text-end" >
-        Componente: {{ordenacao}}
-        <select @change="filtrar" v-model="ordenacao" class=" form-select"  aria-label="Default select example">
+        <select class="form-select" @change="filtrar" v-model="ordenacao">
             <option selected disabled>Filtrar</option>
-            <option v-for="opcao in opcoes"  :key="opcao.titulo" :value="opcao">{{opcao.titulo}}</option>
-
+            <option v-for="opcao in opcoes" :key="opcao.titulo" :value="opcao">
+                {{opcao.titulo}}
+            </option>
         </select>
-    </div>
 </template>
+
+
+    
