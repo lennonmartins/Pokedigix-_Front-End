@@ -8,11 +8,32 @@ import Ordenacao from '../components/Ordenacao.vue';
 export default {
     name: "ataques-lista",
     data() {
+
         return {
             ataques: [],
+            pagina: 1,
+            tamanho: 10,
+            termo: "",
+            totalPaginas: '',
+            quantidade: 3,
+            ordenacao: {
+                titulo: "",
+                direcao: "",
+                campo: ""
+            },
             ataqueSelecionado: this.inicializarAtaques(),
             isLoading: false,
             fullPage: false,
+            opcoes: [{
+                titulo: "Nome: A - Z",
+                direcao: "ASC",
+                campo: "nome"
+            },
+            {
+                titulo: "Nome: Z - A",
+                direcao: "DESC",
+                campo: "nome"
+            }],
         };
     },
     components: {
@@ -22,14 +43,29 @@ export default {
         Ordenacao
     },
     methods: {
+        filtrarPeloDigitado() {
+            if (this.termo.length > 3) {
+                this.buscarPokemons();
+            }
+        },
+        trocarPagina(p) {
+            this.pagina = p;
+            this.buscarAtaques();
+        },
+        pesquisar(texto) {
+            this.termo = texto;
+            this.buscarAtaques();
+        },
         buscarAtaques() {
             this.isLoading = true;
-            AtaqueDataService.buscarTodos()
-                .then(resposta => {
-                    this.ataques = resposta;
+            AtaqueDataService.buscarTodosOrdenados(this.pagina - 1, this.tamanho, this.ordenacao.campo, this.ordenacao.direcao, this.termo)
+                .then((resposta) => {
+                    this.ataques = resposta.ataques;
+                    this.totalPaginas = resposta.totalPaginas;
                     this.isLoading = false;
+                    console.log(this.ataques);
                 })
-                .catch(erro => {
+                .catch((erro) => {
                     console.log(erro);
                     this.isLoading = false;
                 })
@@ -66,6 +102,7 @@ export default {
 
     mounted() {
         this.buscarAtaques();
+        this.ordenacao = this.opcoes[0]
     }
 }
 </script>
@@ -73,14 +110,16 @@ export default {
 <template>
     <main>
         <div>
-            <h2 class=" mb-4 mt-4 " >Lista de Ataques</h2>
-            <div class="row " style="justify-content: space-between;">
-                <pesquisa>
+            <h2 class=" mb-4 mt-4 ">Lista de Ataques</h2>
+            <div class="mb-4 row " style="justify-content: space-between;">
+                <div class="col-4">
+                    <Pesquisa :texto="termo" :pesquisar="pesquisar" />
+                </div>
+                <div class="col-2 text-end">
+                    <Ordenacao v-model="ordenacao" @ordenar="buscarAtaques" :ordenacao="ordenacao" :opcoes="opcoes" />
+                </div>
 
-                </pesquisa>
-                <ordenacao>
 
-                </ordenacao>
             </div>
             <div class="table-responsive  ">
                 <loading v-model:active="isLoading" :is-full-page="fullPage" :loader="'dots'" />
@@ -153,8 +192,8 @@ export default {
                 </div>
             </div>
         </div>
-        <paginacao>
+        <Paginacao :totalPaginas="totalPaginas" :quantidade="quantidade" :atual="pagina" :trocarPagina="trocarPagina">
+        </Paginacao>
 
-        </paginacao>
     </main>
 </template>

@@ -10,9 +10,11 @@ export default {
   data() {
     return {
       pokemons: [],
-      pagina: 0,
-      tamanho: 9,
+      pagina: 1,
+      tamanho: 6,
       termo: "",
+      totalPaginas: '',
+      quantidade: 3,
       ordenacao: {
         titulo: "",
         direcao: "",
@@ -51,11 +53,20 @@ export default {
         this.buscarPokemons();
       }
     },
+    trocarPagina(p){
+      this.pagina = p;
+      this.buscarPokemons();
+    },
+    pesquisar(texto) {
+      this.termo = texto;
+      this.buscarPokemons();
+    },
     buscarPokemons() {
       this.isLoading = true;
-      PokemonDataService.buscarTodosOrdenados(this.pagina, this.tamanho, this.ordenacao.campo, this.ordenacao.direcao, this.termo)
+      PokemonDataService.buscarTodosOrdenados(this.pagina-1, this.tamanho, this.ordenacao.campo, this.ordenacao.direcao, this.termo)
         .then((resposta) => {
-          this.pokemons = resposta;
+          this.pokemons = resposta.pokemons;
+          this.totalPaginas = resposta.totalPaginas;
           this.isLoading = false;
           console.log(this.pokemons);
         })
@@ -112,7 +123,9 @@ export default {
   <h2 class=" mb-4 mt-4">Lista de Pokemons</h2>
   <div class="container">
     <div class="row " style="justify-content: space-between;">
-      <Pesquisa v-model="pesquisa" @pesquisar="filtrarPeloDigitado" :pesquisa="pesquisa" :opcoes="opcoes"/>
+      <div class="col-4">
+          <Pesquisa :texto="termo" :pesquisar="pesquisar" />
+        </div>
       <div class="col-2 text-end">
         <Ordenacao v-model="ordenacao" @ordenar="buscarPokemons" :ordenacao="ordenacao" :opcoes="opcoes" />
       </div>
@@ -224,8 +237,6 @@ export default {
   <div class="m-2 col-1">
     <button @click="novo" class="btn btn-success">Novo</button>
   </div>
-  <paginacao>
-
-  </paginacao>
+  <Paginacao :totalPaginas="totalPaginas" :quantidade="quantidade" :atual="pagina" :trocarPagina="trocarPagina"></Paginacao>
 
 </template>
