@@ -12,7 +12,7 @@ export default {
         return {
             ataques: [],
             pagina: 1,
-            tamanho: 10,
+            tamanho: 2,
             termo: "",
             totalPaginas: '',
             quantidade: 3,

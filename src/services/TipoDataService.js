@@ -1,8 +1,13 @@
 import http from '../http-commons';
 
 class TipoDataService{
-    async buscarTodos(){
+    async buscarTodos() {
         let resposta = await http.get('/tipos');
+        return resposta.data;
+    }
+
+    async buscarTodosOrdenados(pagina, tamanho, campoOrdenacao, direcao, nome) {
+        let resposta = await http.get(`/tipos?pagina=${pagina}&tamanho=${tamanho}&campoOrdenacao=${campoOrdenacao}&termo=${nome}&direcao=${direcao}`);
         return resposta.data;
     }
 

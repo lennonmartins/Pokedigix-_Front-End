@@ -4,7 +4,9 @@ import PokemonRequest from '../models/PokemonRequest';
 import TipoDataService from '../services/TipoDataService';
 import PokemonResponse from '../models/AtaqueResponse';
 import AtaqueDataService from '../services/AtaqueDataService';
+import MensagemErro from '../components/icons/MensagemErro.vue';
 import MensagemSucesso from '../components/MensagemSucesso.vue';
+import { Toast } from 'bootstrap';
 
 export default {
     name: "pokemons-novo",
@@ -16,14 +18,19 @@ export default {
             salvo: false,
             ataques: [],
             ataquesSelecionados: [],
-            ataqueSeleciado: {},
+            ataqueSelecionado: {},
+            mensagemDeErro: "",
+
         };
+    }, components: {
+        MensagemErro,
+        MensagemSucesso
     },
     methods: {
         carregarTipos() {
             TipoDataService.buscarTodos()
                 .then(resposta => {
-                    this.tipos = resposta;
+                    this.tipos = resposta.tipos;
                 })
                 .catch(erro => {
                     console.log(erro);
@@ -32,7 +39,7 @@ export default {
         carregarAtaques() {
             AtaqueDataService.buscarTodos()
                 .then(resposta => {
-                    this.ataques = resposta;
+                    this.ataques = resposta.ataques;
                 })
                 .catch(erro => {
                     console.log(erro);
@@ -45,11 +52,19 @@ export default {
             this.pokemonRequest.ataquesIds =
                 this.ataquesSelecionados.map(ataque => ataque.id);
             PokemonDataService.criar(this.pokemonRequest)
-                .then(() => {
+                .then(resposta => {
+                    this.pokemonResponse = resposta;
+                    console.log(this.pokemonResponse);
                     this.salvo = true;
                 })
                 .catch(erro => {
                     console.log(erro);
+                    this.mensagemDeErro = erro.response.data.errors[0];
+                    this.tipo = erro.response.data.type;
+                    const toastLiveExample = document.getElementById('liveToast');
+                    const toast = new Toast(toastLiveExample);
+                    toast.show();
+                    this.salvo = false;
                     console.log(this.pokemonResponse);
                 });
         },
@@ -59,12 +74,13 @@ export default {
             };
         },
         novo() {
-            this.pokemonRequest = new PokemonRequest();
             this.salvo = false;
+            this.pokemonRequest = new PokemonRequest();
+            this.pokemonResponse=  new PokemonResponse();            
         },
         selecionarAtaque() {
             if (this.ataquesSelecionados.length < 4) {
-                this.ataquesSelecionados.push(this.ataqueSeleciado);
+                this.ataquesSelecionados.push(this.ataqueSelecionado);
                 this.ataquesSelecionados = [...new Set(this.ataquesSelecionados)];
             }
         },
@@ -76,7 +92,6 @@ export default {
         this.carregarTipos();
         this.carregarAtaques();
     },
-    components: { MensagemSucesso }
 }
 
 </script>
@@ -162,7 +177,7 @@ export default {
                                 v-model="pokemonRequest.tiposIds[0]">
                                 <option value="">Nenhum</option>
                                 <option v-for="tipo in tipos" :key="tipo.id" :value="tipo.id">
-                                    {{tipo.nome}}
+                                    {{ tipo.nome }}
                                 </option>
 
                             </select>
@@ -174,7 +189,7 @@ export default {
                                 v-model="pokemonRequest.tiposIds[1]">
                                 <option value="" selected>Nenhum</option>
                                 <option v-for="tipo in tipos" :key="tipo.id" :value="tipo.id">
-                                    {{tipo.nome}}
+                                    {{ tipo.nome }}
                                 </option>
 
                             </select>
@@ -185,10 +200,10 @@ export default {
                         <div>
                             <label for="ataque1" class="form-label"> Ataque 1</label>
                             <select id="ataque1" class="form-select" aria-label=".form-select-lg example"
-                                v-model="ataqueSeleciado" @change="selecionarAtaque">
+                                v-model="ataqueSelecionado" @change="selecionarAtaque">
                                 <option v-for="ataque in ataques" :key="ataque.id" :value="ataque">
-                                    {{ataque.nome}} | Força: {{ataque.forca}} | Tipo: {{ataque.tipo.nome}} | Categoria:
-                                    {{ataque.categoria}}
+                                    {{ ataque.nome }} | Força: {{ ataque.forca }} | Tipo: {{ ataque.tipo.nome }} | Categoria:
+                                    {{ ataque.categoria }}
                                 </option>
 
                             </select>
@@ -202,7 +217,7 @@ export default {
                                     <div class="container">
                                         <div class="row align-items-center">
                                             <div class="col-9">
-                                                {{ataque.nome}}
+                                                {{ ataque.nome }}
                                             </div>
                                             <div class="col-3">
                                                 <button class=" btn" @click.prevent="removerAtaque(indice)">
@@ -219,11 +234,11 @@ export default {
 
                                 <div class="card-body">
                                     <ul class="list-group list-group">
-                                        <li class="list-group-item  text-bg">Tipo: {{ataque.tipo.nome}}</li>
-                                        <li class="list-group-item  text-bg">Forca: {{ataque.forca}}</li>
-                                        <li class="list-group-item  text-bg">Acurácia: {{ataque.acuracia}}</li>
-                                        <li class="list-group-item  text-bg">Categoria: {{ataque.categoria}}</li>
-                                        <li class="list-group-item  text-bg">Descrição: {{ataque.descricao}}</li>
+                                        <li class="list-group-item  text-bg">Tipo: {{ ataque.tipo.nome }}</li>
+                                        <li class="list-group-item  text-bg">Forca: {{ ataque.forca }}</li>
+                                        <li class="list-group-item  text-bg">Acurácia: {{ ataque.acuracia }}</li>
+                                        <li class="list-group-item  text-bg">Categoria: {{ ataque.categoria }}</li>
+                                        <li class="list-group-item  text-bg">Descrição: {{ ataque.descricao }}</li>
                                     </ul>
 
 
@@ -233,7 +248,7 @@ export default {
                         </div>
                     </div>
 
-
+                    <MensagemErro :mensagemDeErro="mensagemDeErro"></MensagemErro>
 
                 </form>
                 <div class="row">
@@ -248,9 +263,9 @@ export default {
 
     </div>
     <div v-else>
-        <MensagemSucesso  urlListagem="pokemons-lista" @casdastro="novo">
+        <MensagemSucesso urlListagem="pokemons-lista" @casdastro="novo">
             <span>
-                Pokemon cadastrado: {{pokemonResponse.nome}}
+                Pokemon cadastrado: {{ pokemonResponse.nome }}
             </span>
         </MensagemSucesso>
     </div>

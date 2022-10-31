@@ -4,7 +4,8 @@ import AtaqueRequest from '../models/AtaqueRequest'
 import TipoDataService from '../services/TipoDataService';
 import AtaqueResponse from '../models/AtaqueResponse';
 import MensagemSucesso from '../components/MensagemSucesso.vue';
-
+import MensagemErro from '../components/icons/MensagemErro.vue';
+import { Toast } from 'bootstrap';
 
 export default {
     name: "ataques-novo",
@@ -32,17 +33,19 @@ export default {
             ],
             tipos: [],
             desabilitarForca: false,
+            mensagemDeErro: "",
+            tipo: ""
         };
     },
     compponents: {
-        MensagemSucesso
+        MensagemSucesso,
+        MensagemErro
     },
     methods: {
         carregarTipos() {
             TipoDataService.buscarTodos()
                 .then(resposta => {
-                    this.tipos = resposta;
-                    this.ataqueRequest.tipoId = this.tipos[0].id;
+                    this.tipos = resposta.tipos;
                 })
                 .catch(erro => {
                     console.log(erro);
@@ -57,6 +60,11 @@ export default {
                 })
                 .catch(erro => {
                     console.log(erro);
+                    this.mensagemDeErro = erro.response.data.errors[0];
+                    this.tipo = erro.response.data.type;
+                    const toastLiveExample = document.getElementById('liveToast');
+                    const toast = new Toast(toastLiveExample);
+                    toast.show();
                     console.log(this.ataqueRequest);
                     this.salvo = false;
                 });
@@ -79,8 +87,7 @@ export default {
     mounted() {
         this.carregarTipos();
         this.novo();
-    },
-    components: { MensagemSucesso }
+    }
 }
 </script>
 
@@ -88,7 +95,8 @@ export default {
     <h2 class="mt-4 mb-4">Cadastrar um novo Ataque</h2>
     <div v-if="!salvo">
         <div class="border p-2 rounded row-1 " style="max-width: 32rem; align-items: center;">
-            <form class="row g-3">
+            <form class="row g-3" @submit.prevent="salvar">
+                
                 <div class="col-12">
                     <label for="nome" class="form-label">Nome do Ataque: </label>
                     <input type="Text" class="form-control" v-model="ataqueRequest.nome" id="nome"
@@ -109,7 +117,7 @@ export default {
                     <select id="categoria" v-on:change="escolherCategoria" class="form-select"
                         v-model="ataqueRequest.categoria">
                         <option v-for="categoria in categorias" :key="categoria.indice" :value="categoria.nomeBanco">
-                            {{categoria.nome}}</option>
+                            {{ categoria.nome }}</option>
                     </select>
                 </div>
                 <div class="col-3">
@@ -120,7 +128,7 @@ export default {
                     <label for="categoria" class="form-label">Tipo do ataque: </label>
                     <select id="tipo" class="form-select" v-model="ataqueRequest.tipoId">
                         <option v-for="tipo in tipos" :key="tipo.id" :value="tipo.id">
-                            {{tipo.nome}}
+                            {{ tipo.nome }}
                         </option>
                     </select>
                 </div>
@@ -128,17 +136,18 @@ export default {
                     <label for="descricao" class="form-label">Descrição do Ataque: </label>
                     <textarea class="form-control" id="descricao" v-model="ataqueRequest.descricao" rows="3"></textarea>
                 </div>
-                
-                    <div>
-                        <button @click.prevent="salvar" class="btn btn-danger row-1">Cadastrar</button>
-                    </div>
-                
+
+                <div>
+                    <button id="liveToastBtn" type="submit" class="btn btn-danger row-1">Cadastrar</button>
+                </div>
+                <MensagemErro :mensagemDeErro="mensagemDeErro" ></MensagemErro>
+
             </form>
         </div>
     </div>
     <div v-else>
         <MensagemSucesso urlListagem="ataques-lista" @cadastro="novo">
-            <span> Ataque cadastrado: {{ataqueResponse.nome}}</span>
+            <span> Ataque cadastrado: {{ ataqueResponse.nome }}</span>
         </MensagemSucesso>
     </div>
 </template>

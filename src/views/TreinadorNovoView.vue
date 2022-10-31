@@ -24,7 +24,7 @@ export default {
     carregarPokemons() {
       PokemonDataService.buscarTodos()
         .then(resposta => {
-          this.pokemons = resposta
+          this.pokemons = resposta.pokemons
         })
         .catch(erro => {
           console.log(erro);

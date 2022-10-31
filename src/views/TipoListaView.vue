@@ -11,25 +11,60 @@ export default {
         return {
             tipos: [],
             tipoSelecionado: this.inicializarTipo(),
-            isLoading: false
+            isLoading: false,
+            fullPage: false,
+            pagina: 1,
+            tamanho: 10,
+            termo: "",
+            totalPaginas: '',
+            quantidade: 3,
+            ordenacao: {
+                titulo: "",
+                direcao: "",
+                campo: ""
+            },
+            opcoes: [{
+                titulo: "Nome: A - Z",
+                direcao: "ASC",
+                campo: "nome"
+            },
+            {
+                titulo: "Nome: Z - A",
+                direcao: "DESC",
+                campo: "nome"
+            }],
         };
-
     },
     components: {
-    Loading,
-    Paginacao,
-    Pesquisa,
-    Ordenacao
-},
+        Loading,
+        Paginacao,
+        Pesquisa,
+        Ordenacao
+    },
     methods: {
+        filtrarPeloDigitado() {
+            if (this.termo.length > 3) {
+                this.buscarPokemons();
+            }
+        },
+        trocarPagina(p) {
+            this.pagina = p;
+            this.buscarTipos();
+        },
+        pesquisar(texto) {
+            this.termo = texto;
+            this.buscarTipos();
+        },
         buscarTipos() {
             this.isLoading = true;
-            TipoDataService.buscarTodos()
-                .then(resposta => {
-                    this.tipos = resposta;
+            TipoDataService.buscarTodosOrdenados(this.pagina - 1, this.tamanho, this.ordenacao.campo, this.ordenacao.direcao, this.termo)
+                .then((resposta) => {
+                    this.tipos = resposta.tipos;
+                    this.totalPaginas = resposta.totalPaginas;
                     this.isLoading = false;
+                    console.log(this.tipos);
                 })
-                .catch(erro => {
+                .catch((erro) => {
                     console.log(erro);
                     this.isLoading = false;
                 })
@@ -63,7 +98,7 @@ export default {
             this.tipoSelecionado.id = tipo.id;
             this.tipoSelecionado.nome = tipo.nome
         },
-        novo(){
+        novo() {
             this.$router.push({
                 name: 'tipos-novo'
             })
@@ -71,6 +106,7 @@ export default {
     },
     mounted() {
         this.buscarTipos();
+        this.ordenacao = this.opcoes[0]
     }
 
 }
@@ -79,14 +115,14 @@ export default {
 <template>
     <div class="row">
         <h2 class="mb-4 mt-4">Lista de Tipos</h2>
-        <div class="row " style="justify-content: space-between;">
-                <pesquisa>
-
-                </pesquisa>
-                <ordenacao>
-                    
-                </ordenacao>
+        <div class="mb-4 row " style="justify-content: space-between;">
+            <div class="col-4">
+                <Pesquisa :texto="termo" :pesquisar="pesquisar" />
             </div>
+            <div class="col-2 text-end">
+                <Ordenacao v-model="ordenacao" @ordenar="buscarTipos" :ordenacao="ordenacao" :opcoes="opcoes" />
+            </div>
+        </div>
         <div class="table-responsive">
             <loading v-model:active="isLoading" />
             <table class="table  table-striped">
@@ -154,8 +190,7 @@ export default {
             <button @click="novo" class="btn btn-dark mt-2">Novo</button>
         </div>
     </div>
-    <paginacao>
-
-    </paginacao>
+    <Paginacao :totalPaginas="totalPaginas" :quantidade="quantidade" :atual="pagina" :trocarPagina="trocarPagina">
+    </Paginacao>
 
 </template>

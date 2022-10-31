@@ -181,7 +181,7 @@ export default {
                 <img style="width: 250px;" class="img-fluid rounded-start "
                   :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/' + pokemon.numeroPokedex + '.png'" />
               </div>
-              <button type="button" class="btn btn-outline-success btn-sm mt-0.5" @click="mudarShiny()"
+              <button type="button" class="mb-2 btn btn-outline-success btn-sm mt-1" @click="mudarShiny()"
                 style="--bs-btn-padding-y: .15rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"> Shiny
               </button>
             </div>

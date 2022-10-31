@@ -45,7 +45,7 @@ export default {
             <form class="row">
                 <div class="mb-3 ">
                     <label for="nome" class="form-label">Nome do Tipo</label>
-                    <input type="Text" class="form-control" v-model="tipo.nome" id="nome" placeholder="ex. Água"
+                    <input type="Text" class="form-control" v-model="tipo.nome" id="nome" placeholder=" "
                         required>
                 </div>
                 <div>
