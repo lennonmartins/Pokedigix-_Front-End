@@ -3,9 +3,10 @@ import AtaqueDataService from '../services/AtaqueDataService';
 import AtaqueRequest from '../models/AtaqueRequest'
 import TipoDataService from '../services/TipoDataService';
 import AtaqueResponse from '../models/AtaqueResponse';
+import MensagemErroDTO from '../models/MensagemErroDTO';
 import MensagemSucesso from '../components/MensagemSucesso.vue';
-import MensagemErro from '../components/icons/MensagemErro.vue';
 import { Toast } from 'bootstrap';
+import MensagemErro from '../components/icons/MensagemErro.vue';
 
 export default {
     name: "ataques-novo",
@@ -33,13 +34,8 @@ export default {
             ],
             tipos: [],
             desabilitarForca: false,
-            mensagemDeErro: "",
-            tipo: ""
+            mensagemErroDTO: new MensagemErroDTO()
         };
-    },
-    compponents: {
-        MensagemSucesso,
-        MensagemErro
     },
     methods: {
         carregarTipos() {
@@ -60,8 +56,21 @@ export default {
                 })
                 .catch(erro => {
                     console.log(erro);
-                    this.mensagemDeErro = erro.response.data.errors[0];
-                    this.tipo = erro.response.data.type;
+                    this.mensagemErroDTO.tipo = erro.response.data.type;
+                    this.mensagemErroDTO.status = erro.response.data.status;
+                    const campoAcuracia = document.getElementById("acuracia");
+                    const campoForca = document.getElementById("forca");
+                    campoAcuracia.setCustomValidity("");
+                    campoForca.setCustomValidity("");
+                    if (this.mensagemErroDTO.tipo == "DataIntegrityViolationException" ||this.mensagemErroDTO.tipo == "InvalidDataAccessApiUsageException") {
+                        this.mensagemErroDTO.mensagemDeErro = "Preencha todos os campos obrigatorios."
+                    } else if (this.mensagemErroDTO.tipo == "AcuraciaInvalidaException") {
+                        this.mensagemErroDTO.mensagemDeErro = erro.response.data.errors[0];
+                        campoAcuracia.setCustomValidity(this.mensagemErroDTO.mensagemDeErro)
+                    } else if (this.mensagemErroDTO.tipo == "ForcaInvalidaParaCategoriaException") {
+                        this.mensagemErroDTO.mensagemDeErro = erro.response.data.errors[0];
+                        campoForca.setCustomValidity(this.mensagemErroDTO.mensagemDeErro)
+                    }
                     const toastLiveExample = document.getElementById('liveToast');
                     const toast = new Toast(toastLiveExample);
                     toast.show();
@@ -87,7 +96,16 @@ export default {
     mounted() {
         this.carregarTipos();
         this.novo();
-    }
+        const form = document.querySelector('.needs-validation')
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    },
+    components: { MensagemErro, MensagemSucesso }
 }
 </script>
 
@@ -95,8 +113,8 @@ export default {
     <h2 class="mt-4 mb-4">Cadastrar um novo Ataque</h2>
     <div v-if="!salvo">
         <div class="border p-2 rounded row-1 " style="max-width: 32rem; align-items: center;">
-            <form class="row g-3" @submit.prevent="salvar">
-                
+            <form class="row g-3 needs-validation" @submit.prevent="salvar" novalidate>
+
                 <div class="col-12">
                     <label for="nome" class="form-label">Nome do Ataque: </label>
                     <input type="Text" class="form-control" v-model="ataqueRequest.nome" id="nome"
@@ -104,13 +122,34 @@ export default {
                 </div>
                 <div class="col-6">
                     <label for="forca" class="form-label">Força:</label>
-                    <input type="Text" :disabled="desabilitarForca" class="form-control" v-model="ataqueRequest.forca"
-                        id="forca" placeholder="0 - 50" required>
+                    <div class="has-validation">
+                        <input 
+                            type="Text" 
+                            :disabled="desabilitarForca" 
+                            class="form-control"
+                            v-model="ataqueRequest.forca" 
+                            id="forca" 
+                            placeholder="0 - 100" 
+                            required>
+                        <div v-if="this.mensagemErroDTO.tipo == 'ForcaInvalidaParaCategoriaException'"
+                            class="invalid-feedback">
+                            {{ mensagemErroDTO.mensagemDeErro }}
+                        </div>
+                    </div>
                 </div>
                 <div class="col-6">
                     <label for="acuracia" class="form-label">Acurácia: </label>
-                    <input type="Text" class="form-control" v-model="ataqueRequest.acuracia" id="acuracia"
-                        placeholder="0 - 100" required>
+                    <div class="has-validation">
+                        <input 
+                            type="Text" 
+                            class="form-control" 
+                            v-model="ataqueRequest.acuracia" 
+                            id="acuracia"
+                            placeholder="0 - 100" required>
+                        <div v-if="this.mensagemErroDTO.tipo == 'AcuraciaInvalidaException'" class="invalid-feedback">
+                            {{ mensagemErroDTO.mensagemDeErro }}
+                        </div>
+                    </div>
                 </div>
                 <div class="col-9">
                     <label for="categoria" class="form-label">Categoria: </label>
@@ -140,9 +179,11 @@ export default {
                 <div>
                     <button id="liveToastBtn" type="submit" class="btn btn-danger row-1">Cadastrar</button>
                 </div>
-                <MensagemErro :mensagemDeErro="mensagemDeErro" ></MensagemErro>
-
             </form>
+            <MensagemErro v-if="this.mensagemErroDTO.tipo == 
+            'DataIntegrityViolationException' || this.mensagemErroDTO.tipo == 'InvalidDataAccessApiUsageException'" 
+            :mensagemErroDTO="mensagemErroDTO" ></MensagemErro>
+
         </div>
     </div>
     <div v-else>

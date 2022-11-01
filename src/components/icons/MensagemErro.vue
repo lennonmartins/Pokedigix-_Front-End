@@ -1,19 +1,23 @@
 <script>
+import MensagemErroDTO from '../../models/MensagemErroDTO';
+
 
 export default {
-    name: 'mensage-erro',
+    name: 'mensagem-erro',
     props: {
-        mensagemDeErro: String,
-        ativo: Boolean
+        mensagemErroDTO: MensagemErroDTO,
     },
 
-}
+};
 </script>
+
 <template>
     <div class="toast-container position-absolute top-0 end-0 mt-5 p-5">
         <div id="liveToast" class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-body">
-                {{ mensagemDeErro }}
+                {{
+                    mensagemErroDTO.mensagemDeErro
+                }}
             </div>
         </div>
     </div>

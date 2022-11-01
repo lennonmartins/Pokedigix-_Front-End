@@ -4,6 +4,7 @@ import PokemonRequest from '../models/PokemonRequest';
 import TipoDataService from '../services/TipoDataService';
 import PokemonResponse from '../models/AtaqueResponse';
 import AtaqueDataService from '../services/AtaqueDataService';
+import MensagemErroDTO from '../models/MensagemErroDTO';
 import MensagemErro from '../components/icons/MensagemErro.vue';
 import MensagemSucesso from '../components/MensagemSucesso.vue';
 import { Toast } from 'bootstrap';
@@ -19,13 +20,9 @@ export default {
             ataques: [],
             ataquesSelecionados: [],
             ataqueSelecionado: {},
-            mensagemDeErro: "",
-
+            mensagemErroDTO: new MensagemErroDTO()
         };
-    }, components: {
-        MensagemErro,
-        MensagemSucesso
-    },
+    }, 
     methods: {
         carregarTipos() {
             TipoDataService.buscarTodos()
@@ -59,8 +56,21 @@ export default {
                 })
                 .catch(erro => {
                     console.log(erro);
-                    this.mensagemDeErro = erro.response.data.errors[0];
-                    this.tipo = erro.response.data.type;
+                    this.mensagemErroDTO.tipo = erro.response.data.type;
+                    this.mensagemErroDTO.status = erro.response.data.status;
+                    const campoNivel = document.getElementById("nivel");
+                    const campoFelicidade = document.getElementById("felicidade");
+                    campoNivel.setCustomValidity("");
+                    campoFelicidade.setCustomValidity("");
+                    if (this.mensagemErroDTO.tipo == "DataIntegrityViolationException" || this.mensagemErroDTO.tipo == "InvalidDataAccessApiUsageException") {
+                        this.mensagemErroDTO.mensagemDeErro = "Preencha todos os campos obrigatorios."
+                    } else if (this.mensagemErroDTO.tipo == "NivelPokemonInvalidoException") {
+                        this.mensagemErroDTO.mensagemDeErro = erro.response.data.errors[0];
+                        campoNivel.setCustomValidity(this.mensagemErroDTO.mensagemDeErro)
+                    } else if (this.mensagemErroDTO.tipo == "FelicidadeInvalidaException") {
+                        this.mensagemErroDTO.mensagemDeErro = erro.response.data.errors[0];
+                        campoFelicidade.setCustomValidity(this.mensagemErroDTO.mensagemDeErro)
+                    }
                     const toastLiveExample = document.getElementById('liveToast');
                     const toast = new Toast(toastLiveExample);
                     toast.show();
@@ -76,7 +86,7 @@ export default {
         novo() {
             this.salvo = false;
             this.pokemonRequest = new PokemonRequest();
-            this.pokemonResponse=  new PokemonResponse();            
+            this.pokemonResponse = new PokemonResponse();
         },
         selecionarAtaque() {
             if (this.ataquesSelecionados.length < 4) {
@@ -91,7 +101,16 @@ export default {
     mounted() {
         this.carregarTipos();
         this.carregarAtaques();
+        const form = document.querySelector('.needs-validation')
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
     },
+    components: { MensagemErro, MensagemSucesso }
 }
 
 </script>
@@ -102,7 +121,7 @@ export default {
 
         <div class="col-12" style="display: inline;">
             <div class="border p-2 rounded row-1 center" style="max-width: 72rem;">
-                <form class="row g-3 mt-1 ">
+                <form class="row g-3 mt-1  needs-validation" @submit.prevent="salvar" novalidate>
                     <div class="row mt-1">
                         <div class="col-md-8">
                             <label for="nome" class="form-label">Nome</label>
@@ -128,8 +147,19 @@ export default {
                         </div>
                         <div class="col-4">
                             <label for="felicidade" class="form-label">Felicidade</label>
-                            <input required v-model="pokemonRequest.felicidade" type="number" class="form-control"
-                                id="felicidade" aria-label="Felicidade">
+                            <div class="has-validation">
+                                <input 
+                                required 
+                                v-model="pokemonRequest.felicidade" 
+                                type="number" 
+                                class="form-control"
+                                id="felicidade" 
+                                aria-label="Felicidade">
+                                <div class="invalid-feedback"
+                                    v-if="this.mensagemErroDTO.tipo == 'FelicidadeInvalidaException'">
+                                    {{ mensagemErroDTO.mensagemDeErro }}
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row mt-2 ">
@@ -166,8 +196,14 @@ export default {
 
                         <div class="col-3">
                             <label for="nivel" class="form-label">Nível</label>
-                            <input v-model="pokemonRequest.nivel" type="number" class="form-control" id="nivel"
-                                aria-label="Nível" required>
+                            <div class="has-validation">
+                                <input v-model="pokemonRequest.nivel" type="number" class="form-control" id="nivel"
+                                    aria-label="Nível" required>
+                                <div class="invalid-feedback"
+                                    v-if="this.mensagemErroDTO.tipo == 'NivelPokemonInvalidoException'">
+                                    {{ mensagemErroDTO.mensagemDeErro }}
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -202,7 +238,8 @@ export default {
                             <select id="ataque1" class="form-select" aria-label=".form-select-lg example"
                                 v-model="ataqueSelecionado" @change="selecionarAtaque">
                                 <option v-for="ataque in ataques" :key="ataque.id" :value="ataque">
-                                    {{ ataque.nome }} | Força: {{ ataque.forca }} | Tipo: {{ ataque.tipo.nome }} | Categoria:
+                                    {{ ataque.nome }} | Força: {{ ataque.forca }} | Tipo: {{ ataque.tipo.nome }} |
+                                    Categoria:
                                     {{ ataque.categoria }}
                                 </option>
 
@@ -248,14 +285,17 @@ export default {
                         </div>
                     </div>
 
-                    <MensagemErro :mensagemDeErro="mensagemDeErro"></MensagemErro>
-
-                </form>
-                <div class="row">
-                    <div class="col-6">
-                        <button @click.prevent="salvar" class="mt-3 btn btn-danger row-1">Cadastrar</button>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <button @click.prevent="salvar" class="mt-3 btn btn-danger row-1">Cadastrar</button>
+                        </div>
                     </div>
-                </div>
+                </form>
+                <MensagemErro v-if="this.mensagemErroDTO.tipo == 
+            'DataIntegrityViolationException' || this.mensagemErroDTO.tipo == 'InvalidDataAccessApiUsageException'" 
+            :mensagemErroDTO="mensagemErroDTO" ></MensagemErro>
+
 
 
             </div>
