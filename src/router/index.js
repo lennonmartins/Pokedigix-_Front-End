@@ -13,6 +13,7 @@ const PokemonNovoView = () => import('@/views/PokemonNovoView.vue');
 const TreinadorListaView = () => import('@/views/TreinadorListaView.vue');
 const TreinadorNovoView = () => import('@/views/TreinadorNovoView.vue');
 const AuthView = () => import('@/views/AuthView.vue');
+const LoginView = () => import('@/views/LoginView.vue');
 const PageNotFound = () => import('@/views/PageNotFoundView.vue');
 
 
@@ -75,7 +76,7 @@ const router = createRouter({
     }, {
       path: '/usuarios/login',
       name: 'sign-in',
-      component: AuthView
+      component: LoginView
     }
 
   ]

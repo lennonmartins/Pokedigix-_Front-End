@@ -119,7 +119,7 @@ export default {
             </div>
             <div class="me-4">
                 <button class="btn btn-danger me-2">
-                    <RouterLink class="dropdown-item" to="/usuarios/novo">Login</RouterLink>
+                    <RouterLink class="dropdown-item" to="/usuarios/login">Login</RouterLink>
                 </button>
                 
             </div>
