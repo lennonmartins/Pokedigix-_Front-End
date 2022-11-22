@@ -12,6 +12,7 @@ const AtaqueEditView = () => import('@/views/AtaqueEditView.vue');
 const PokemonNovoView = () => import('@/views/PokemonNovoView.vue');
 const TreinadorListaView = () => import('@/views/TreinadorListaView.vue');
 const TreinadorNovoView = () => import('@/views/TreinadorNovoView.vue');
+const AuthView = () => import('@/views/AuthView.vue');
 const PageNotFound = () => import('@/views/PageNotFoundView.vue');
 
 
@@ -67,6 +68,14 @@ const router = createRouter({
       path: '/treinadores/novo',
       name: 'treinadores-novo',
       component: TreinadorNovoView
+    }, {
+      path: '/usuarios/novo',
+      name: 'sign-up',
+      component: AuthView
+    }, {
+      path: '/usuarios/login',
+      name: 'sign-in',
+      component: AuthView
     }
 
   ]

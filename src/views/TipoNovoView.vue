@@ -11,7 +11,7 @@ export default {
             salvo: false
         }
     },
-    components:{
+    components: {
         MensagemSucessoVue
     },
     methods: {
@@ -41,12 +41,11 @@ export default {
 <template>
     <h2 class="mt-4">Cadastrar um novo tipo</h2>
     <div v-if="!salvo">
-    <div class="border p-2 rounded row-1 col-6 " style="max-width: 450px;">
+        <div class="border p-2 rounded row-1 col-6 " style="max-width: 450px;">
             <form class="row">
                 <div class="mb-3 ">
                     <label for="nome" class="form-label">Nome do Tipo</label>
-                    <input type="Text" class="form-control" v-model="tipo.nome" id="nome" placeholder=" "
-                        required>
+                    <input type="Text" class="form-control" v-model="tipo.nome" id="nome" placeholder=" " required>
                 </div>
                 <div>
                     <button @click.prevent="salvar" class="btn btn-dark row-1">Cadastrar</button>
@@ -55,8 +54,8 @@ export default {
         </div>
     </div>
     <div v-else>
-       <MensagemSucessoVue @cadastro="novo" urlListagem="tipos-lista" >
-            <span>O tipo {{tipo.nome}} foi cadastrado com sucesso!</span>
-       </MensagemSucessoVue>
+        <MensagemSucessoVue @cadastro="novo" urlListagem="tipos-lista">
+            <span>O tipo {{ tipo.nome }} foi cadastrado com sucesso!</span>
+        </MensagemSucessoVue>
     </div>
 </template>
