@@ -1,23 +1,27 @@
 <script>
 import AuthDataService from '../services/AuthDataService';
 import LoginRequest from '../models/LoginRequest';
+import { useCookies } from 'vue3-cookies';
 
 export default {
     name: "sign-up",
+    setup(){
+        const{cookies} =  useCookies();
+        return {cookies};
+    },
     data() {
         return {
             loginRequest: new LoginRequest(),
             salvo: false
         };
-
     },
     methods: {
         salvar() {
-            console.log(this.loginRequest);
             AuthDataService.acessar(this.loginRequest)
-                .then(resposta => {
-                    this.username = resposta.uername;
-                    this.salvo = true;
+            .then(resposta => {
+                    
+                    this.cookies.set('user_token', resposta.accessToken, '5MIN');
+                    this.cookies.set('user_name', resposta.username, '5MIN');
                 })
                 .catch(erro => {
                     console.log(erro);
@@ -26,7 +30,6 @@ export default {
         },
         novo() {
             this.loginRequest = new LoginRequest();
-            this.salvo = false;
         }
     },
     mounted() {
@@ -36,18 +39,17 @@ export default {
 </script>
 <template>
     <div style="display: flex; align-items: center; flex-direction: column;margin-top: 10em;" >
-        <div class="card" style="width: 24rem;">
+        <div  class="card" style="width: 24rem;">
             <div class="card-header">
                 <h2 style="text-align: center;" class="center">Login</h2>
             </div>
-            <div class=" p-4 rounded row-1 " style="max-width: 28rem; ">
+            <div class="card-body p-4 rounded row-1 " style="max-width: 28rem; ">
                 <form class=" mt-2 g-3 needs-validation" @submit.prevent="salvar" novalidate>
-
                     <div class="col-12 mt-2">
                         <label for="username" class="form-label">Username: </label>
                         <div class="input-group">
                             <div class="input-group-text">@</div>
-                            <input type="Text" class="form-control" id="username" required
+                            <input type="text" class="form-control" id="username" required
                                 v-model="loginRequest.username">
                         </div>
                     </div>
@@ -70,7 +72,7 @@ export default {
                                 Lembrar-me
                             </label>
                         </div>
-                        <a href="#" class="stretched-link" style="text-decoration: none ;">Esqueci minha senha</a>
+                        <a href="#" class="" style="text-decoration: none ;">Esqueci minha senha</a>
                     </div>
 
 

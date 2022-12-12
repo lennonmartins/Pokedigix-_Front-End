@@ -4,12 +4,12 @@ class AuthDataService {
 
     async criar(login){
         let resposta = await http.post('/auth/signup', login)
-        return resposta;
+        return resposta.data;
     }
 
     async acessar(login){
         let resposta = await http.post('/auth/signin', login)
-        return resposta;
+        return resposta.data;
     }
 
 }

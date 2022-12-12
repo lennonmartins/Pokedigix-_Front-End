@@ -1,5 +1,4 @@
 <script >
-import { RouterLink } from 'vue-router';
 import { useCookies } from "vue3-cookies";
 
 const { cookies } = useCookies();
@@ -115,13 +114,13 @@ export default {
                         </ul>
                     </div>
                 </span>
+                <div class="me-4">
+                    <button class="btn btn-danger me-2">
+                        <RouterLink class="dropdown-item" to="/usuarios/login">Login</RouterLink>
+                    </button>
+                    
+                </div>
 
-            </div>
-            <div class="me-4">
-                <button class="btn btn-danger me-2">
-                    <RouterLink class="dropdown-item" to="/usuarios/login">Login</RouterLink>
-                </button>
-                
             </div>
         </nav>
     </header>

@@ -19,7 +19,7 @@ export default {
         salvar() {
             AuthDataService.criar(this.authRequest)
                 .then(resposta => {
-                    this.username = resposta.uername;
+                    this.username = resposta.username;
                     this.salvo = true;
                 })
                 .catch(erro => {
@@ -43,7 +43,7 @@ export default {
             <div class="card-header">
                 <h2 class="mb-2 mt-2">Cadastrar novo Usuário</h2>
             </div>
-            <div class="p-2 rounded row-1 " style="max-width: 24rem; ">
+            <div class="p-4 rounded row-1 " style="max-width: 24rem; ">
                 <form class="row g-3 needs-validation" @submit.prevent="salvar" novalidate>
 
                     <div class="col-12">
@@ -87,15 +87,18 @@ export default {
                         </div>
                     </div>
 
-
                     <div>
-                        <button id="liveToastBtn" type="submit" class="btn btn-danger row-1">Cadastrar</button>
+                        <button id="liveToastBtn" type="submit"
+                            class=" mt-4 my-2 col-12  btn btn-outline-success p-2">Cadastrar</button>
                     </div>
                 </form>
+                <a class="" style="text-decoration: none; text-align: center;">
+                    <RouterLink class="dropdown-item" to="/usuarios/login">Já tenho cadastro</RouterLink>
+                </a>
             </div>
         </div>
         <div v-else>
-            <MensagemSucessoVue @cadastro="novo" urlListagem="pokemon-lista">
+            <MensagemSucessoVue @cadastro="novo" urlListagem="sign-in">
                 <span>Usuário {{ authRequest.username }} foi cadastrado com sucesso!</span>
             </MensagemSucessoVue>
         </div>
